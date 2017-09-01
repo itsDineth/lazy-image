@@ -32,7 +32,7 @@
   <script>
     /**
      * `lazy-image`
-     * Loads image when it's in view.
+     * Loads image when it's in view. Uses the intersection observer API. Therefore, polyfills may be required on certain browsers.
      *
      * @customElement
      * @polymer
@@ -44,12 +44,25 @@
       }
       static get properties() {
         return {
+          /**
+           *  Image source
+           * */
           src: String,
+          /**
+           *  Image alt
+           * */
           alt: String,
+          /**
+           *  Base64 encoded data to be used as a placeholder until the image is loaded into view. 
+           *  Note: A width and a height must be specified when using the placeholder.
+           * */
           placeholder: {
             type: String,
             value: null
           },
+          /**
+           *  If truthy, the image will fade into view.
+           * */
           fade: {
             type: Boolean,
             value: false
