@@ -1,0 +1,29 @@
+{
+  "name": "lazy-image",
+  "description": "Loads image when it&#39;s in view.",
+  "main": "lazy-image.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0",
+    "iron-component-page": "PolymerElements/iron-component-page#^3.0.1"
+  },
+  "devDependencies": {
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+  },
+  "resolutions": {
+    "polymer": "^2.0.0"
+  },
+  "homepage": "https://github.com/DinethH/lazy-image",
+  "version": "0.0.1",
+  "_release": "0.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.1",
+    "commit": "8347374415fee10e7bbddf69fecb280cf9f9c299"
+  },
+  "_source": "https://github.com/DinethH/lazy-image.git",
+  "_target": "^0.0.1",
+  "_originalSource": "lazy-image",
+  "_direct": true
+}
