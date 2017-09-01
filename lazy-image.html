@@ -1,0 +1,107 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/lib/utils/render-status.html">
+
+<dom-module id="lazy-image">
+  <template>
+    <style>
+       :host {
+        display: block;
+        background-size: 100% 100%;
+        position: relative;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        text-indent: -9999px;
+      }
+
+      .fade-in {
+        animation: fade-in 300ms ease-in-out;
+      }
+
+      @keyframes fade-in {
+        from {
+          opacity: 0
+        }
+      }
+    </style>
+    <img alt="[[alt]]">
+  </template>
+
+  <script>
+    /**
+     * `lazy-image`
+     * Loads image when it's in view.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class LazyImage extends Polymer.Element {
+      static get is() {
+        return 'lazy-image';
+      }
+      static get properties() {
+        return {
+          src: String,
+          alt: String,
+          placeholder: {
+            type: String,
+            value: null
+          },
+          fade: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_placeholderChanged(placeholder)'
+        ]
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+
+        const imgEl = Polymer.dom(this.root).querySelector('img');
+
+        if (window.IntersectionObserver) {
+          const io = new IntersectionObserver(entries => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                if (this.src) {
+                  imgEl.src = this.src;
+                }
+                io.unobserve(this);
+              }
+            }
+          });
+          io.observe(this);
+        } else {
+          imgEl.src = this.src;
+        }
+
+        if (this.fade) {
+          imgEl.onload = () => {
+            imgEl.classList.add('fade-in');
+          }
+        }
+      }
+
+      disconnectedCallback() {
+        super.disconnectedCallback();
+      }
+
+      _placeholderChanged(placeholder) {
+        if (placeholder) {
+          this.style.backgroundImage = `url(${placeholder})`;
+        }
+      }
+    }
+
+    window.customElements.define(LazyImage.is, LazyImage);
+  </script>
+</dom-module>
