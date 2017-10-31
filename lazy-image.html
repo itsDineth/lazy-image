@@ -17,7 +17,11 @@
         will-change: opacity;
       }
 
-      .fade-in {
+      :host([loaded]) img {
+        display: block;
+      }
+
+      :host([fade]) img {
         animation: fade-in 300ms ease-in-out;
       }
 
@@ -27,7 +31,8 @@
         }
       }
     </style>
-    <img class="fade-in" alt="[[alt]]">
+
+    <img alt="[[alt]]">
   </template>
 
   <script>
@@ -48,7 +53,10 @@
           /**
            *  Image source
            * */
-          src: String,
+          src: {
+            type: String,
+            observer: '_srcChanged',
+          },
           /**
            *  Image alt
            * */
@@ -66,46 +74,72 @@
            * */
           fade: {
             type: Boolean,
-            value: false
-          }
+            value: false,
+            reflectToAttribute: true,
+          },
+          /**
+           *  Settled when the image is visible.
+           * */
+          visible: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true,
+          },
+          /**
+           *  Settled when the image is loaded.
+           * */
+          loaded: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true,
+          },
         };
       }
 
       static get observers() {
         return [
+          '_displayImageWhenNVisible(src, visible, loaded)',
           '_placeholderChanged(placeholder)'
         ]
+      }
+
+      constructor() {
+        super();
+
+        if (window.IntersectionObserver) {
+          this._io = new IntersectionObserver(entries => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                this.visible = true;
+                this.loaded = false;
+                this._io.unobserve(this);
+              }
+            }
+          });
+        }
       }
 
       connectedCallback() {
         super.connectedCallback();
 
-        const imgEl = Polymer.dom(this.root).querySelector('img');
+        this._imgEl = Polymer.dom(this.root).querySelector('img');
+      }
 
+      _srcChanged(src) {
         if (window.IntersectionObserver) {
-          const io = new IntersectionObserver(entries => {
-            for (const entry of entries) {
-              if (entry.isIntersecting) {
-                if (this.src) {
-                  imgEl.src = this.src;
-                }
-                io.unobserve(this);
-              }
-            }
-          });
-          io.observe(this);
+          this.visible = false;
+          this._io.observe(this);
         } else {
-          imgEl.src = this.src;
+          this.visible = true;
         }
 
-        if ((document.documentMode || /Edge/.test(navigator.userAgent))) {
-          imgEl.src = this.src;
-        }
+        this.loaded = false;
+      }
 
-        if (this.fade) {
-          imgEl.onload = () => {
-            imgEl.style.display = 'block';
-          }
+      _displayImageWhenNVisible(src, visible, loaded) {
+        if (visible === true && loaded === false) {
+          this._imgEl.onload = () => this.loaded = true;
+          this._imgEl.src = src;
         }
       }
 
