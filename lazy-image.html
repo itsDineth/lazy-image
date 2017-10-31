@@ -67,7 +67,8 @@
            * */
           placeholder: {
             type: String,
-            value: null
+            value: null,
+            observer: '_placeholderChanged',
           },
           /**
            *  If truthy, the image will fade into view.
@@ -99,7 +100,6 @@
       static get observers() {
         return [
           '_displayImageWhenNVisible(src, visible, loaded)',
-          '_placeholderChanged(placeholder)'
         ]
       }
 
