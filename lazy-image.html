@@ -3,7 +3,7 @@
 <dom-module id="lazy-image">
   <template>
     <style>
-       :host {
+      :host {
         display: block;
         background-size: 100% 100%;
         position: relative;
@@ -17,7 +17,11 @@
         will-change: opacity;
       }
 
-      .fade-in {
+      :host([loaded]) img {
+        display: block;
+      }
+
+      :host([fade]) img {
         animation: fade-in 300ms ease-in-out;
       }
 
@@ -27,7 +31,8 @@
         }
       }
     </style>
-    <img class="fade-in" alt="[[alt]]">
+
+    <img alt="[[alt]]">
   </template>
 
   <script>
@@ -48,69 +53,94 @@
           /**
            *  Image source
            * */
-          src: String,
+          src: {
+            type: String,
+            observer: '_srcChanged',
+          },
           /**
            *  Image alt
            * */
           alt: String,
           /**
-           *  Base64 encoded data to be used as a placeholder until the image is loaded into view. 
+           *  Base64 encoded data to be used as a placeholder until the image is loaded into view.
            *  Note: A width and a height must be specified when using the placeholder.
            * */
           placeholder: {
             type: String,
-            value: null
+            value: null,
+            observer: '_placeholderChanged',
           },
           /**
            *  If truthy, the image will fade into view.
            * */
           fade: {
             type: Boolean,
-            value: false
-          }
+            value: false,
+            reflectToAttribute: true,
+          },
+          /**
+           *  Settled when the image is visible.
+           * */
+          visible: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true,
+          },
+          /**
+           *  Settled when the image is loaded.
+           * */
+          loaded: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true,
+          },
         };
       }
 
       static get observers() {
         return [
-          '_placeholderChanged(placeholder)'
+          '_displayImageWhenNVisible(src, visible, loaded)',
         ]
+      }
+
+      constructor() {
+        super();
+
+        if (window.IntersectionObserver) {
+          this._io = new IntersectionObserver(entries => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                this.visible = true;
+                this.loaded = false;
+                this._io.unobserve(this);
+              }
+            }
+          });
+        }
       }
 
       connectedCallback() {
         super.connectedCallback();
 
-        const imgEl = Polymer.dom(this.root).querySelector('img');
-
-        if (window.IntersectionObserver) {
-          const io = new IntersectionObserver(entries => {
-            for (const entry of entries) {
-              if (entry.isIntersecting) {
-                if (this.src) {
-                  imgEl.src = this.src;
-                }
-                io.unobserve(this);
-              }
-            }
-          });
-          io.observe(this);
-        } else {
-          imgEl.src = this.src;
-        }
-
-        if ((document.documentMode || /Edge/.test(navigator.userAgent))) {
-          imgEl.src = this.src;
-        }
-
-        if (this.fade) {
-          imgEl.onload = () => {
-            imgEl.style.display = 'block';
-          }
-        }
+        this._imgEl = Polymer.dom(this.root).querySelector('img');
       }
 
-      disconnectedCallback() {
-        super.disconnectedCallback();
+      _srcChanged(src) {
+        if (window.IntersectionObserver) {
+          this.visible = false;
+          this._io.observe(this);
+        } else {
+          this.visible = true;
+        }
+
+        this.loaded = false;
+      }
+
+      _displayImageWhenNVisible(src, visible, loaded) {
+        if (visible === true && loaded === false) {
+          this._imgEl.onload = () => this.loaded = true;
+          this._imgEl.src = src;
+        }
       }
 
       _placeholderChanged(placeholder) {

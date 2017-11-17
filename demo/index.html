@@ -11,6 +11,7 @@
 
   <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
   <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../../iron-list/iron-list.html" />
   <link rel="import" href="../lazy-image.html">
 
   <custom-style>
@@ -22,7 +23,7 @@
 
 <body>
   <div class="vertical-section-container centered">
-    <h3>Basic lazy-image demo</h3>
+    <h3>Basic <code>lazy-image</code> demo</h3>
     <demo-snippet>
       <template>
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis eligendi neque quae ab similique repudiandae
@@ -75,7 +76,32 @@
           accusamus nemo optio consequuntur laudantium. Rem asperiores aperiam et architecto libero unde nobis sit quasi.</p>
 
         <lazy-image src="b.jpg"></lazy-image>
+      </template>
+    </demo-snippet>
+  </div>
 
+  <div class="vertical-section-container centered">
+    <h3><code>lazy-image</code> in an <code>iron-list</code> demo</h3>
+    <demo-snippet>
+      <template>
+        <iron-list items='["a", "a", "a", "a", "a", "a", "b", "b", "b", "b", "b", "b"]' as="item" style="height: 20em; overflow: auto;">
+          <template>
+            <lazy-image src="[[item]].jpg" style="width: 5em; height: 5em;"></lazy-image>
+          </template>
+        </iron-list>
+      </template>
+    </demo-snippet>
+  </div>
+
+  <div class="vertical-section-container centered">
+    <h3><code>lazy-image</code> with <code>fade</code> property in an <code>iron-list</code> demo</h3>
+    <demo-snippet>
+      <template>
+        <iron-list items='["a", "a", "a", "a", "a", "a", "b", "b", "b", "b", "b", "b"]' as="item" style="height: 20em; overflow: auto;">
+          <template>
+            <lazy-image src="[[item]].jpg" fade style="width: 5em; height: 5em;"></lazy-image>
+          </template>
+        </iron-list>
       </template>
     </demo-snippet>
   </div>
