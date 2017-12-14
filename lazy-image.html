@@ -99,7 +99,7 @@
 
       static get observers() {
         return [
-          '_displayImageWhenNVisible(src, visible, loaded)',
+          '_displayImageWhenVisible(src, visible, loaded)',
         ]
       }
 
@@ -136,7 +136,7 @@
         this.loaded = false;
       }
 
-      _displayImageWhenNVisible(src, visible, loaded) {
+      _displayImageWhenVisible(src, visible, loaded) {
         if (visible === true && loaded === false) {
           this._imgEl.onload = () => this.loaded = true;
           this._imgEl.src = src;
