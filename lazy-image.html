@@ -48,6 +48,8 @@
       static get is() {
         return 'lazy-image';
       }
+
+
       static get properties() {
         return {
           /**
@@ -57,10 +59,12 @@
             type: String,
             observer: '_srcChanged',
           },
+
           /**
            *  Image alt
            * */
           alt: String,
+
           /**
            *  Base64 encoded data to be used as a placeholder until the image is loaded into view.
            *  Note: A width and a height must be specified when using the placeholder.
@@ -78,6 +82,7 @@
             value: false,
             reflectToAttribute: true,
           },
+
           /**
            *  Settled when the image is visible.
            * */
@@ -97,11 +102,13 @@
         };
       }
 
+
       static get observers() {
         return [
           '_displayImageWhenVisible(src, visible, loaded)',
         ]
       }
+
 
       constructor() {
         super();
@@ -119,11 +126,13 @@
         }
       }
 
+
       connectedCallback() {
         super.connectedCallback();
 
         this._imgEl = Polymer.dom(this.root).querySelector('img');
       }
+
 
       _srcChanged(src) {
         if (window.IntersectionObserver) {
@@ -136,12 +145,14 @@
         this.loaded = false;
       }
 
+
       _displayImageWhenVisible(src, visible, loaded) {
         if (visible === true && loaded === false) {
           this._imgEl.onload = () => this.loaded = true;
           this._imgEl.src = src;
         }
       }
+
 
       _placeholderChanged(placeholder) {
         if (placeholder) {
