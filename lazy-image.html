@@ -84,9 +84,45 @@
           },
 
           /**
-           *  Settled when the image is visible.
+           *  root IntersectionObserver's option described here https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/IntersectionObserver#Parameters
            * */
-          visible: {
+          scrollElement: {
+            type: Object,
+          },
+          /**
+           *  rootMargin IntersectionObserver's option described here https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/IntersectionObserver#Parameters
+           * */
+          loadMargin: {
+            type: String,
+            computed: '_computeLoadMargin(loadMarginTop, loadMarginRight, loadMarginBottom, loadMarginLeft)',
+          },
+          loadMarginTop: {
+            type: String,
+            value: '300px',
+          },
+          loadMarginRight: {
+            type: String,
+            value: '300px',
+          },
+          loadMarginBottom: {
+            type: String,
+            value: '300px',
+          },
+          loadMarginLeft: {
+            type: String,
+            value: '300px',
+          },
+          /**
+           *  thresholds IntersectionObserver's option described here https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/IntersectionObserver#Parameters
+           * */
+          thresholds: {
+            type: Array,
+          },
+
+          /**
+           *  Settled when the image is visible or about to be visible.
+           * */
+          visibleOrAboutTo: {
             type: Boolean,
             value: false,
             reflectToAttribute: true,
@@ -105,7 +141,8 @@
 
       static get observers() {
         return [
-          '_displayImageWhenVisible(src, visible, loaded)',
+          '_recreateIntersectionObserverOption(scrollElement, loadMargin, thresholds)',
+          '_displayImageWhenVisibleOrAboutTo(src, visibleOrAboutTo, loaded)',
         ]
       }
 
@@ -113,16 +150,22 @@
       constructor() {
         super();
 
+        this._isObserving = false;
+        this._createIntersectionObserver();
+      }
+
+
+      _createIntersectionObserver(options) {
         if (window.IntersectionObserver) {
           this._io = new IntersectionObserver(entries => {
             for (const entry of entries) {
               if (entry.isIntersecting) {
-                this.visible = true;
+                this.visibleOrAboutTo = true;
                 this.loaded = false;
                 this._unobserve();
               }
             }
-          });
+          }, options);
         }
       }
 
@@ -136,31 +179,62 @@
 
       _observe() {
         if (window.IntersectionObserver) {
+          this._isObserving = true;
           this._io.observe(this);
         }
       }
 
       _unobserve() {
         if (window.IntersectionObserver) {
+          this._isObserving = false;
           this._io.unobserve(this);
+        }
+      }
+
+
+      _computeLoadMargin(loadMarginTop, loadMarginRight, loadMarginBottom, loadMarginLeft) {
+        return [
+          loadMarginTop,
+          loadMarginRight,
+          loadMarginBottom,
+          loadMarginLeft
+        ].join(' ');
+      }
+
+
+      _recreateIntersectionObserverOption(scrollElement, loadMargin, thresholds) {
+        if (window.IntersectionObserver) {
+          this._io.disconnect();
+
+          const options = {
+            rootMargin: loadMargin,
+          };
+          if (scrollElement) options.root = scrollElement;
+          if (thresholds) options.thresholds = thresholds;
+
+          this._createIntersectionObserver(options);
+
+          if (this._isObserving) {
+            this._observe();
+          }
         }
       }
 
 
       _srcChanged(src) {
         if (window.IntersectionObserver) {
-          this.visible = false;
+          this.visibleOrAboutTo = false;
           this._observe();
         } else {
-          this.visible = true;
+          this.visibleOrAboutTo = true;
         }
 
         this.loaded = false;
       }
 
 
-      _displayImageWhenVisible(src, visible, loaded) {
-        if (visible === true && loaded === false) {
+      _displayImageWhenVisibleOrAboutTo(src, visibleOrAboutTo, loaded) {
+        if (visibleOrAboutTo === true && loaded === false) {
           this._imgEl.onload = () => this.loaded = true;
           this._imgEl.src = src;
         }

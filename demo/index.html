@@ -105,6 +105,44 @@
       </template>
     </demo-snippet>
   </div>
+
+  <div class="vertical-section-container centered">
+    <h3><code>lazy-image</code> inside a scrollable element with custom <code>load-margin-bottom</code> demo</h3>
+    <demo-snippet>
+      <template>
+        <div style="height: 20em; overflow: auto;" id="scroll-element">
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis eligendi neque quae ab similique repudiandae accusamus
+            nemo optio consequuntur laudantium. Rem asperiores aperiam et architecto libero unde nobis sit quasi.</p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis eligendi neque quae ab similique repudiandae accusamus
+            nemo optio consequuntur laudantium. Rem asperiores aperiam et architecto libero unde nobis sit quasi.</p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis eligendi neque quae ab similique repudiandae accusamus
+            nemo optio consequuntur laudantium. Rem asperiores aperiam et architecto libero unde nobis sit quasi.</p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis eligendi neque quae ab similique repudiandae accusamus
+            nemo optio consequuntur laudantium. Rem asperiores aperiam et architecto libero unde nobis sit quasi.</p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis eligendi neque quae ab similique repudiandae accusamus
+            nemo optio consequuntur laudantium. Rem asperiores aperiam et architecto libero unde nobis sit quasi.</p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis eligendi neque quae ab similique repudiandae accusamus
+            nemo optio consequuntur laudantium. Rem asperiores aperiam et architecto libero unde nobis sit quasi.</p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis eligendi neque quae ab similique repudiandae accusamus
+            nemo optio consequuntur laudantium. Rem asperiores aperiam et architecto libero unde nobis sit quasi.</p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis eligendi neque quae ab similique repudiandae accusamus
+            nemo optio consequuntur laudantium. Rem asperiores aperiam et architecto libero unde nobis sit quasi.</p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis eligendi neque quae ab similique repudiandae accusamus
+            nemo optio consequuntur laudantium. Rem asperiores aperiam et architecto libero unde nobis sit quasi.</p>
+          <lazy-image
+            src="a.jpg"
+            scroll-element="div"
+            load-margin-bottom="100px"
+            style="width: 5em; height: 5em;"
+            id="lazy-image-in-a-scroll-element"
+          ></lazy-image>
+        </div>
+        <script>
+          document.querySelector('#lazy-image-in-a-scroll-element').scrollElement = document.querySelector('#scroll-element')
+        </script>
+      </template>
+    </demo-snippet>
+  </div>
 </body>
 
 </html>
