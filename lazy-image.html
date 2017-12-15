@@ -119,7 +119,7 @@
               if (entry.isIntersecting) {
                 this.visible = true;
                 this.loaded = false;
-                this._io.unobserve(this);
+                this._unobserve();
               }
             }
           });
@@ -134,10 +134,23 @@
       }
 
 
+      _observe() {
+        if (window.IntersectionObserver) {
+          this._io.observe(this);
+        }
+      }
+
+      _unobserve() {
+        if (window.IntersectionObserver) {
+          this._io.unobserve(this);
+        }
+      }
+
+
       _srcChanged(src) {
         if (window.IntersectionObserver) {
           this.visible = false;
-          this._io.observe(this);
+          this._observe();
         } else {
           this.visible = true;
         }
